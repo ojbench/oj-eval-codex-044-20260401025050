@@ -1,4 +1,8 @@
-#include <bits/stdc++.h>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
 using namespace std;
 
 class mystring {
