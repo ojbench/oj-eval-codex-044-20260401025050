@@ -21,7 +21,7 @@ public:
         }
     }
 
-    mystring(string& s) : ch(nullptr), len(0) {
+    mystring(const string& s) : ch(nullptr), len(0) {
         if (!s.empty()) {
             len = static_cast<int>(s.length());
             ch = new char[len];
@@ -118,6 +118,77 @@ public:
         delete[] ch;
         ch = n;
         len += rhs.len;
+    }
+
+    // operator+= for concatenation
+    mystring& operator+=(const mystring& rhs) {
+        ADD(rhs);
+        return *this;
+    }
+
+    // operator+ returns a new concatenated mystring
+    mystring operator+(const mystring& rhs) const {
+        mystring res;
+        if (len == 0) return rhs;
+        if (rhs.len == 0) return *this;
+        res.len = len + rhs.len;
+        res.ch = new char[res.len];
+        memcpy(res.ch, ch, static_cast<size_t>(len));
+        memcpy(res.ch + len, rhs.ch, static_cast<size_t>(rhs.len));
+        return res;
+    }
+
+    // substr: return subrange starting at pos with length count
+    mystring substr(int pos, int count) const {
+        if (pos < 0) pos = 0;
+        if (pos >= len || count <= 0) return mystring();
+        int avail = len - pos;
+        int take = count < avail ? count : avail;
+        mystring res;
+        res.len = take;
+        res.ch = new char[take];
+        memcpy(res.ch, ch + pos, static_cast<size_t>(take));
+        return res;
+    }
+
+    // insert s before position pos (clamped to [0, len])
+    void insert(int pos, const mystring& s) {
+        if (s.len == 0) return;
+        if (pos < 0) pos = 0;
+        if (pos > len) pos = len;
+        char* n = new char[static_cast<size_t>(len) + s.len];
+        // prefix
+        if (pos > 0) memcpy(n, ch, static_cast<size_t>(pos));
+        // inserted
+        memcpy(n + pos, s.ch, static_cast<size_t>(s.len));
+        // suffix
+        if (len - pos > 0) memcpy(n + pos + s.len, ch + pos, static_cast<size_t>(len - pos));
+        delete[] ch;
+        ch = n;
+        len += s.len;
+    }
+
+    // erase count chars starting at pos
+    void erase(int pos, int count) {
+        if (pos < 0) pos = 0;
+        if (pos >= len || count <= 0) return;
+        int rem = len - pos;
+        int del = count < rem ? count : rem;
+        int nlen = len - del;
+        if (nlen == 0) {
+            delete[] ch;
+            ch = nullptr;
+            len = 0;
+            return;
+        }
+        char* n = new char[nlen];
+        // copy prefix
+        if (pos > 0) memcpy(n, ch, static_cast<size_t>(pos));
+        // copy suffix
+        if (len - pos - del > 0) memcpy(n + pos, ch + pos + del, static_cast<size_t>(len - pos - del));
+        delete[] ch;
+        ch = n;
+        len = nlen;
     }
 
     // Output the stored string as-is (no newline)
