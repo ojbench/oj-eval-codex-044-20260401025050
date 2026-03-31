@@ -134,14 +134,14 @@ string str_in1, str_in2;
 int n, id;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+    // Keep default iostream sync to avoid mixing issues with C stdio
+    // and preserve expected output ordering.
 
     if (!(cin >> id)) return 0;
     if (id == 1) {
         mystring str1(100, 'a');
         str1.out();
-        puts("");
+        cout << '\n';
         // cout << str1 << endl;
     } else if (id == 2) {
         cin >> str_in1;
@@ -162,7 +162,7 @@ int main() {
         mystring str3 = str_in2;
         str2.ADD(str3);
         str2.out();
-        puts("");
+        cout << '\n';
         // cout << str2 << endl;
     } else {
         cin >> str_in1 >> str_in2;
@@ -177,10 +177,9 @@ int main() {
         cout << (int)(str2 < str3) << '\n';
         str2.ADD(str3);
         str2.out();
-        puts("");
+        cout << '\n';
         // cout << str2 << endl;
         cout << str2.get_len() << '\n';
     }
     return 0;
 }
-
